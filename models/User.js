@@ -19,7 +19,18 @@ const userSchema = new Schema({
             type: Types.ObjectId,
             ref: 'Thought'
         }
+    ],
+    // array of User(friend)'s ids
+    friends: [
+        {
+            type: Types.ObjectId,
+            ref: this
+        }
     ]
+});
+
+userSchema.virtual('friendCount').get(function() {
+    return this.friends.length;
 });
 
 const User = model('User', userSchema);
