@@ -1,14 +1,17 @@
 const { User, Thought } = require('../models');
 
 const userController = {
+    // get all the users
     getAllUsers(req, res) {
         User.find({})
             .then(dbUser => res.json(dbUser))
             .catch(err => res.status(500).json(err));
     },
 
+    // get single user by its id
     getUserById({ params }, res) {
         User.findOne({ _id: params.id })
+            // show details of the user's thoughts and friends instead of their ids
             .populate([
                 {
                     path: 'thoughts',
@@ -19,6 +22,7 @@ const userController = {
                     model: User
                 }
             ])
+            // replace __v property to thoughts
             .select('-__v')
             .then(dbUser => {
                 if (!dbUser) {
@@ -40,7 +44,8 @@ const userController = {
         User.findOneAndUpdate(
             { _id: params.id },
             body,
-            { new: true }
+            // return updated version and validate information
+            { new: true, runValidators: true }
         )
             .then(dbUser => {
                 if (!dbUser) {
@@ -60,13 +65,16 @@ const userController = {
                     return;
                 }
                 
+                // delete thoughts associated with the user
                 return Thought.deleteMany({ username: dbUser.username });
             })
             .then(dbThought => res.json(dbThought))
             .catch(err => res.status(500).json(err));
     },
 
+    // add friend to the user's friends list
     addFriend({ params }, res) {
+        // find the friend's information
         User.findOne({ _id: params.friendId })
             .then(dbFriend => {
                 if (!dbFriend) {
@@ -74,9 +82,11 @@ const userController = {
                     return;
                 }
 
+                // update the user's friends list by pushing friend's info into user's friends property
                 return User.findOneAndUpdate(
                     { _id: params.userId },
                     { $push: { friends: dbFriend } },
+                    // return updated version
                     { new: true }
                 );
             })
@@ -90,10 +100,13 @@ const userController = {
             .catch(err => res.status(500).json(err));
     },
 
+    // delete friend
     deleteFriend({ params }, res) {
+        // update the user by pulling friend's info by its id from the user's friends array
         User.findOneAndUpdate(
             { _id: params.userId },
             { $pull: { friends: params.friendId } },
+            // return updated version
             { new: true }
         )
             .then(dbUser => {

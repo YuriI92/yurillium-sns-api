@@ -12,6 +12,7 @@ const userSchema = new Schema(
             type: String,
             unique: true,
             required: 'Email address is required',
+            // email validation using regex
             match: /^[a-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6}$/
         },
         // array of Thought's ids
@@ -38,6 +39,7 @@ const userSchema = new Schema(
     }
 );
 
+// counts the number of friends for the user
 userSchema.virtual('friendCount').get(function() {
     return this.friends.length;
 });
