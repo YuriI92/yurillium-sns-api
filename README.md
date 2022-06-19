@@ -19,7 +19,7 @@ This is an API created for social networking service. You can create users and t
    ```
 
 ## Usage
-Watch the [walk through video]()!<br/>
+Watch the [walk through video](https://drive.google.com/file/d/1UdPLOEvW7tDFUDd3Ly2tZumUqINbekg9/view)!<br/>
 Default localhost link: http://localhost:3002/
 1. Start the app by the following command: 
    ```
